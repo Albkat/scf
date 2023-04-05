@@ -1,5 +1,2 @@
-program main
-  implicit none
-
-  print *, "hello from project scf"
-end program main
+module scf_main
+endmodule scf_main
