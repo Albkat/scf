@@ -37,7 +37,8 @@ module parser
         procedure, private :: findArg
         procedure, private ::  getArg
         procedure :: nextArg
-    
+        procedure :: reset
+
     end type type_parser
 
     interface init
@@ -77,7 +78,6 @@ subroutine init_parser(self)
     
     self%flag_pos = 0
 
-    print*,nargs
 
 end subroutine init_parser
 
@@ -136,7 +136,7 @@ function getArg(self, argument,iS,iE) result(position)
         !! instance of the parser
 
     character(len=*), intent(in) :: argument
-        !! cml arg
+        !! cml arge
 
     integer, intent(in), optional :: iS
         !! start pos
@@ -198,4 +198,13 @@ function findArg(self,argument, iS, iE) result(position)
         endif
     enddo
 end function findArg
+
+subroutine reset(self)
+
+    class(type_parser), intent(inout) :: self
+    
+    self%arg%unused = .true.
+    self%flag_pos = 0
+
+end subroutine reset
 end module parser

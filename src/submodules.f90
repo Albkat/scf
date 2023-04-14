@@ -27,7 +27,12 @@ function getsubmod(arg) result(mod)
         mod = submodule%invalid
     case ('scf')
         mod = submodule%scf
+    case ('ccsdt')
+        mod = submodule%scf
+        print *, "gods have abandoned this place"
+
     end select
+
 end function getsubmod
 
 end module submodules
