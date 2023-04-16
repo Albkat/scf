@@ -2,7 +2,7 @@ module chartools
     implicit none
     private
 
-    public :: to_lowercase
+    public :: to_lowercase, rdarg
 
     integer, parameter :: offset = iachar('A') - iachar('a')
 contains
@@ -39,4 +39,15 @@ function to_lowercase(str) result(lowercase)
         endif
     end do
 end function to_lowercase
+
+subroutine rdarg(i,argument,iostat)
+    
+    integer, intent(in) :: i 
+
+    character(len=:), allocatable, intent(out) :: argument
+        !! raw argument value
+
+    integer, intent(out), optional :: iostat
+        !! if error 
+end subroutine rdarg
 end module chartools
