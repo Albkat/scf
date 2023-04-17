@@ -17,6 +17,9 @@ module environment
         type(type_message), allocatable :: log(:)
             !! meassage log
 
+        character(len=:), allocatable :: whoami
+            !! executable name
+
     end type type_environment
 
     type :: type_message
@@ -47,6 +50,10 @@ subroutine init_env(self,strict)
     self%number_log = 0
     allocate(self%log(initial_size))
 
+    call rdarg(0, self%whoami, err)
 end subroutine init_env
+
+!> create and push back a new error to the message log
+subroutine error(self, message, source)
 
 end module environment
