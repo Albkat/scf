@@ -52,14 +52,17 @@ subroutine rdarg(i,argument,iostat)
     
     integer :: l, err
 
-    if (allocated(argument)) deallocate(arg)
+    if (allocated(argument)) deallocate(argument)
     call get_command_argument(i,length=l, status= err)
     if(err.ne.0) then
         if (present(iostat)) then
             iostat = err
             return
         else
-            call raise('E','Command arument corrupted')
+            call raise('E','Command argument corrupted')
+        endif
+    endif
 
+    call raise('E','Command argument corrupted')
 end subroutine rdarg
 end module chartools
