@@ -13,12 +13,15 @@ program hf
   integer :: rMode
     !! runMode of program
 
-
-  call init(parser)  
-    !! Intialize argument parser from cml
+  call lib_init('scf',10,.true.)
+    !! to allocate persistentEnv
 
   call init(env)
     !! initialiaze environment
+  
+  call init(parser)  
+    !! Intialize argument parser from cml
+
 
   call getRunmode(parser,rMode)
     !! Get rMode (invalid, scf)

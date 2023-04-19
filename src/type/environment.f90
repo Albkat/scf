@@ -1,6 +1,7 @@
 module environment
     use, intrinsic :: iso_fortran_env, only : stdout => output_unit
-    use chartools, only : rdarg
+    use chartools, only : rdarg, rdvar
+    use io, only : type_io, init_ => init
     implicit none
     private
 
@@ -19,9 +20,27 @@ module environment
 
         character(len=:), allocatable :: whoami
             !! executable name
+        
+        character(len=:), allocatable :: hostname
+            !! name of hosting machine
 
+        character(len=:), allocatable :: home
+            !! name of homedir
+        
+        character(len=:), allocatable :: path
+            !! path variable
+
+        character(len=:), allocatable :: scfhome
+            !! scf prog directory
+        
+        character(len=:), allocatable :: scfpath
+            !! scf prog location
+        
         logical :: strict
             !! handle warnings as errors
+
+        type(type_io) :: io
+            !! input/output handling
     contains
         
         procedure :: error
@@ -79,6 +98,27 @@ subroutine init_env(self,strict)
     allocate(self%log(initial_size))
 
     call rdarg(0, self%whoami, err)
+    call rdvar('HOSTNAME', self%hostname, err)
+    call rdvar('HOME', self%home, err)
+    call rdvar('PATH',self%path, err)
+    call rdvar('SCFHOME',self%scfhome,err)
+    if (.not.allocated(self%scfhome)) self%scfhome = ''
+    if (err /= 0 .or. len(self%scfhome) <= 0) then
+        self%scfhome = self%home
+    endif
+    call rdvar('SCFPATH', self%scfpath,err)
+    if (.not.allocated(self%scfpath)) self%scfpath = ''
+    if (err /= 0 .or. len(self%scfpath) <= 0 ) then
+        self%scfpath = self%scfhome
+    endif
+
+    if (present(strict)) then
+        self%strict = strict
+    else 
+        self%strict = .false.
+    endif
+
+    call init_(self%io)
 
 end subroutine init_env
 
