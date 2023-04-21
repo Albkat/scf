@@ -2,6 +2,7 @@ program hf
   use parser, only : type_parser,init
   use submodules
   use environment
+  use scf_main, only : scfMain
 
   implicit none
   type(type_parser) :: parser
@@ -22,9 +23,17 @@ program hf
   call init(parser)  
     !! Intialize argument parser from cml
 
-
   call getRunmode(parser,rMode)
     !! Get rMode (invalid, scf)
+
+  select case(rMode)
+  case(submodule%scf)
+    
+    call scfMain(env, parser)
+      !! Entry point of the main
+  end select
+
+
 
   print *, "Terminated normally"
 
@@ -60,4 +69,7 @@ subroutine getRunmode(parser,rMode)
   endif
 
 end subroutine getRunmode
+
+
+
 end program hf
