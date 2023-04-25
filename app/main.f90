@@ -15,8 +15,22 @@ subroutine scfMain(env,parser)
 
     type(type_parser), intent(inout) :: parser
         !! cml parser
-
+    !----------------------------------------------
+    !> read the commnd line arguments
+    !----------------------------------------------
+    call parse(env,parser)  
 
 end subroutine scfMain
-  
+
+subroutine parse(env, parse)
+    character(len=*), parameter :: source = "app_main_parse"
+
+    type(type_environment), intent(inout) :: env
+        !! instance of calc env
+
+    type(type_parser), intent(inout) :: parser
+        !! instance of parser
+
+end subroutine parse
+
 endmodule scf_main
