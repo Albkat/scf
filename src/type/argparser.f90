@@ -1,5 +1,5 @@
 !> Cml parser for hf program
-module parser
+module cml_parser
     use, intrinsic :: iso_fortran_env, only : wp=>real64
     use chartools
     implicit none
@@ -38,6 +38,8 @@ module parser
         procedure, private ::  getArg
         procedure :: nextArg
         procedure :: reset
+        procedure :: countFlags
+        procedure :: nextFlag
 
     end type type_parser
 
@@ -207,4 +209,36 @@ subroutine reset(self)
     self%flag_pos = 0
 
 end subroutine reset
-end module parser
+
+function countFlags(self) result(nFlags)
+
+    class(type_parser), intent(in) :: self
+        !! Instance of the cml parser
+    
+    integer :: nFlags
+        !! number of unprocessed flags
+
+    nFlags = count(self%arg%unused .and. self%arg%isFlag)
+
+end function countFlags
+
+subroutine nextFlag(self,flag)
+    
+    class(type_parser), intent(inout) :: self
+        !! Instance of the cml parser
+
+    character(len=:), allocatable, intent(out) :: flag
+        !! raw flag
+
+    integer :: iarg
+
+    do iarg = self%flag_start, self%flag_end
+        if(self%arg(iarg)%unused .and. self%arg(iarg)%isFlag) then
+            flag = self%arg(iarg)%raw
+            self%flag_pos = iarg
+            self%arg(iarg)%unused = .false.
+            exit
+        endif
+    enddo
+end subroutine nextFlag
+end module cml_parser

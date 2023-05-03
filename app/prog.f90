@@ -1,5 +1,5 @@
 program hf
-  use parser, only : type_parser,init
+  use cml_parser, only : type_parser,init
   use submodules
   use environment
   use scf_main, only : scfMain
