@@ -39,6 +39,16 @@ subroutine parse(env, args)
     nFlags = args%countFlags()
     call args%nextFlag(flag)
 
+    do while(allocated(flag))
+        !> change flags from - to --
+        if(len(flag) > 2 .and. flag(1:1) == '-' .and. flag(1:2) /= '--') then
+            call env%warning("the use of '"//flag//"' is discouraged, "//&
+                & "please use '-"//flag//"' next time", source)
+            flag = -//flag
+        endif
+        print *, flag
+    end do
+
 end subroutine parse
 
 endmodule scf_main
