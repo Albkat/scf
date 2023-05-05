@@ -1,5 +1,4 @@
 module chartools
-    use gerror
     implicit none
     private
 

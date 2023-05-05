@@ -234,7 +234,7 @@ subroutine nextFlag(self,flag)
 
     do iarg = self%flag_start, self%flag_end
         if(self%arg(iarg)%unused .and. self%arg(iarg)%isFlag) then
-            flag = self%arg(iarg)%raw
+            flag = self%arg(iarg)%input
             self%flag_pos = iarg
             self%arg(iarg)%unused = .false.
             exit

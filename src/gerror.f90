@@ -1,16 +1,5 @@
-module gerror
-    use global, only : strict, persistentEnv
-    use iso_fortran_env, only : stderr => error_unit
-    use global, only : name
-    implicit none
-    private
-    public :: raise, terminate
-    interface
-        module procedure :: raise
-        module procedure :: terminate
-        end interface
-contains
 subroutine raise(mode,mess)
+    use global, only : strict, persistentEnv
     implicit none
     character, intent(in) :: mode 
     character(len=*), intent(in) :: mess
@@ -43,6 +32,8 @@ subroutine raise(mode,mess)
 end subroutine raise
 
 subroutine terminate(sig)
+    use iso_fortran_env, only : stderr => error_unit
+    use global, only : name
     implicit none
     integer, intent(in) :: sig
 
@@ -64,5 +55,3 @@ subroutine terminate(sig)
     end select
 
 end subroutine terminate
-
-endmodule gerror

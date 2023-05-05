@@ -1,5 +1,6 @@
 module scf_main
     use environment, only : type_environment
+    use setmod
     use cml_parser, only : type_parser
     implicit none
     private
@@ -19,7 +20,6 @@ subroutine scfMain(env,args)
     !> read the commnd line arguments
     !----------------------------------------------
     call parse(env,args)  
-
 end subroutine scfMain
 
 subroutine parse(env, args)
@@ -44,9 +44,16 @@ subroutine parse(env, args)
         if(len(flag) > 2 .and. flag(1:1) == '-' .and. flag(1:2) /= '--') then
             call env%warning("the use of '"//flag//"' is discouraged, "//&
                 & "please use '-"//flag//"' next time", source)
-            flag = -//flag
+            flag = "-"//flag
         endif
-        print *, flag
+        select case(flag)
+        case default
+            call env%warning("Unknown option '"//flag//"' provided", source)
+        case('--rhf')
+            call set_runtyp('rhf')
+
+        end select
+        call args%nextFlag(flag)
     end do
 
 end subroutine parse
