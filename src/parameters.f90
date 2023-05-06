@@ -7,6 +7,12 @@ module parameters
     integer, parameter :: p_run_mp2 = 2
     integer, parameter :: p_run_opt = 3
     integer, parameter :: p_run_mpop = 4
+    
+    !> printlevel
+    integer, parameter :: less = -1
+    integer, parameter :: normal = 0
+    integer, parameter :: verbose = 1
+
 
     !> settings for calculation
     type type_set
