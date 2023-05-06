@@ -14,9 +14,14 @@ module parameters
     integer, parameter :: verbose = 1
 
 
+
     !> settings for calculation
     type type_set
         integer :: runtyp = 0
+        !-------------------------
+        !           general
+        !-------------------------
+        integer :: max_cycles = 100
     end type type_set
     type(type_set) :: set
 
