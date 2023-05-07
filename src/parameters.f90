@@ -22,6 +22,11 @@ module parameters
         !           general
         !-------------------------
         integer :: max_cycles = 100
+
+        !-------------------------
+        !           scf
+        !-------------------------
+        integer :: maxscfiter = 100
     end type type_set
     type(type_set) :: set
 
