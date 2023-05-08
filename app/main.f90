@@ -16,13 +16,43 @@ subroutine scfMain(env,args)
 
     type(type_parser), intent(inout) :: args
         !! cml parser
+
+    !> local var
+    integer :: nFiles
+        !! number of files provided
+    integer :: iFile
+        !! file iterator
+    logical :: h2
+        !! to get h2.in molecule for debugging
+    character(len=:), allocatable :: file_name
+        !! file name of the mol geo
+
     !----------------------------------------------
-    !> read the commnd line arguments
+    !> read command line arguments
     !----------------------------------------------
-    call parse(env,args)  
+    call parse(env,args,h2) 
+
+    nFiles = args%countFiles()
+    !> Check how many files, or should default h2.in be used
+    select case(nFiles)
+    case(0)
+        if (.not. h2) then
+            call env%error("No input file given, so there is nothing to do", source)
+        else
+            file_name = 'h2'
+        endif
+    case(1:)
+        do iFile =1 ,nFiles-1
+            call args%nextFile(file_name)
+            call env%warning("Input file '"//file_name//"' will be ignored", source)
+        enddo
+        call args%nextFile(file_name)
+    end select
+
 end subroutine scfMain
 
-subroutine parse(env, args)
+
+subroutine parse(env, args, h2)
     character(len=*), parameter :: source = "app_main_parse"
 
     type(type_environment), intent(inout) :: env
@@ -31,11 +61,17 @@ subroutine parse(env, args)
     type(type_parser), intent(inout) :: args
         !! instance of parser
 
+    logical, intent(out) :: h2
+        !! debugging with h2
+
+    !> local var
     integer :: nFlags
         !! number of flags
     character(len=:), allocatable :: flag
         !! raw flag 
     
+    h2=.false.
+
     nFlags = args%countFlags()
     call args%nextFlag(flag)
 
@@ -49,8 +85,14 @@ subroutine parse(env, args)
         select case(flag)
         case default
             call env%warning("Unknown option '"//flag//"' provided", source)
+        
+        !> rhf calculation
         case('--rhf')
             call set_runtyp('rhf')
+        
+        !> h2.in as an input
+        case("--h2")
+            h2 = .true.
 
         end select
         call args%nextFlag(flag)

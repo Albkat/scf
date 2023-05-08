@@ -17,7 +17,7 @@ module parameters
 
     !> settings for calculation
     type type_set
-        integer :: runtyp = 0
+        integer :: runtyp = p_run_rhf
         !-------------------------
         !           general
         !-------------------------

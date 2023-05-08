@@ -40,6 +40,8 @@ module cml_parser
         procedure :: reset
         procedure :: countFlags
         procedure :: nextFlag
+        procedure :: countFiles
+        procedure :: nextFile
 
     end type type_parser
 
@@ -111,7 +113,7 @@ subroutine init_arg(self,arg)
         & .and. verify(self%input,flagcharts) == 0 &
         & .and. verify(self%input,numbers) > 0
 
-end subroutine
+end subroutine init_arg
 
 !> Return filename
 subroutine nextArg(self,argument)
@@ -241,4 +243,35 @@ subroutine nextFlag(self,flag)
         endif
     enddo
 end subroutine nextFlag
+
+function countFiles(self) result(nFiles)
+
+    class(type_parser), intent(in) :: self
+        !! instance of parser
+    integer :: nFiles
+        !! no unprocessed files
+
+    nFiles=count(self%arg%unused .and. self%arg%isFile)
+
+end function countFiles
+
+subroutine nextFile(self, fname)
+
+    class(type_parser), intent(inout) :: self
+        !! instance of the cml parser
+
+    character(len=:), allocatable, intent(out) :: fname
+        !! raw file name
+    
+    integer :: idarg
+
+    do idarg = 1, size(self%arg)
+        if(self%arg(idarg)%unused .and. self%arg(idarg)%isFile) then
+            fname = self%arg(idarg)%input
+            self%arg(idarg)%unused = .false.
+            exit 
+        endif
+    enddo
+
+endsubroutine nextFile
 end module cml_parser
