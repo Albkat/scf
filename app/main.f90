@@ -90,6 +90,10 @@ subroutine parse(env, args, h2)
         case('--rhf')
             call set_runtyp('rhf')
         
+        !> help
+        case('--help','-h')
+            call help(env%unit)
+            call terminate(0)
         !> h2.in as an input
         case("--h2")
             h2 = .true.
