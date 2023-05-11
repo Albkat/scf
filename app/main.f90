@@ -49,6 +49,7 @@ subroutine scfMain(env,args)
         call args%nextFile(file_name)
     end select
 
+    call env%checkpoint("CML parsing failed")
 end subroutine scfMain
 
 
