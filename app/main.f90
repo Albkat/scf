@@ -26,6 +26,8 @@ subroutine scfMain(env,args)
         !! to get h2.in molecule for debugging
     character(len=:), allocatable :: file_name
         !! file name of the mol geo
+    integer :: fileID 
+        !! the random unit number for I/O operations
 
     !----------------------------------------------
     !> read command line arguments
@@ -50,6 +52,12 @@ subroutine scfMain(env,args)
     end select
 
     call env%checkpoint("CML parsing failed")
+
+    !> Reading the dot(.) files
+    !> .CHRG
+    call open_file(fileID,'.CHRG','r')
+    
+
 end subroutine scfMain
 
 
