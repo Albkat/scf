@@ -2,6 +2,7 @@ module scf_main
     use environment, only : type_environment
     use setmod
     use cml_parser, only : type_parser
+    use systools, only : get_line
     implicit none
     private
     public :: scfMain
@@ -26,11 +27,15 @@ subroutine scfMain(env,args)
         !! to get h2.in molecule for debugging
     character(len=:), allocatable :: file_name
         !! file name of the mol geo
+    character(len=:), allocatable :: dummy 
+        !! tmp variable to store string data
     integer :: fileID 
         !! the random unit number for I/O operations
+    integer :: err 
+        !! unit for error handling
 
     !----------------------------------------------
-    !> read command line arguments
+    !> read command line arguments and files
     !----------------------------------------------
     call parse(env,args,h2) 
 
@@ -57,6 +62,17 @@ subroutine scfMain(env,args)
     !> .CHRG
     call open_file(fileID,'.CHRG','r')
     
+    if (fileID.ne.-1) then
+        call get_line(fileID,dummy,stat=err)
+        if (err /= 0) then
+            call env%error(".CHRG is empty", source)
+        else 
+            call set_chrg(env,dummy)
+            call close_file(fileID)
+        endif
+    endif
+
+    call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG")
 
 end subroutine scfMain
 

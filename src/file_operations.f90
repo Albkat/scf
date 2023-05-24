@@ -15,3 +15,13 @@ subroutine open_file(unitID,fname,status)
     end select
 
 end subroutine open_file
+
+subroutine close_file(unitID)
+    
+    use global, only : persistentEnv
+    implicit none
+    integer, intent(in) :: unitID
+
+    call persistentEnv%io%closeFile(unitID)
+
+endsubroutine close_file

@@ -22,6 +22,7 @@ module parameters
         !           general
         !-------------------------
         integer :: max_cycles = 100
+        integer :: chrg = 0
 
         !-------------------------
         !           scf

@@ -16,6 +16,8 @@ module io
         procedure :: writeFile
         procedure :: getName
         procedure :: pushBack
+        procedure :: closeFile
+        procedure :: findUnit
     end type type_io
 
     type :: type_filehandle
@@ -23,7 +25,7 @@ module io
         character(len=:), allocatable :: name
         integer :: status
         integer :: unit
-        integer :: open
+        logical :: open
 
     end type type_filehandle
 
@@ -188,5 +190,79 @@ subroutine writeFile(self,unitID,fname,stat)
     endif
 
 end subroutine writeFile
+
+subroutine closeFile(self, unitID, iostat, remove)
+
+    !> dummy args list
+    class(type_io), intent(inout) :: self
+        !! instance of io 
+    integer, intent(in) :: unitID
+        !! file to close
+    integer, intent(out), optional :: iostat
+        !! error handling
+    logical, intent(in), optional :: remove
+        !! if to delete
+
+    !> local vars
+    logical :: delete
+    integer :: error,pos
+
+    if(present(remove)) then 
+        delete = remove
+    else 
+        delete = .false.
+    endif
+
+    error = 0
+
+    call self%findUnit(unitID,pos)
+
+    !$omp critical(io)
+    if (pos>0) then
+        if (delete) then
+            close(unitID, iostat=error, status='delete')
+        else
+            close(unitID, iostat=error)
+        endif
+        if (error == 0) then
+            self%log(pos)%open = .false.
+            if (delete) then
+                self%log(pos)%status = fileStatus%deleted
+            endif
+        endif
+    else 
+        error = 1
+    endif
+    !$omp end critical(io)
+
+    if (present(iostat)) then
+        iostat = error
+    endif
+
+end subroutine closeFile
+
+subroutine findUnit(self,unitID,pos)
+
+    !> dummy args list
+    class(type_io), intent(in) :: self
+        !! instance of io
+    integer, intent(in) :: unitID
+        !! file to search
+    integer, intent(out) :: pos
+        !! position of file in log
+    
+    !> local vars
+    integer :: i
+
+    pos=0
+
+    do i = 1, self%count
+        if (self%log(i)%open .and. self%log(i)%unit==unitID) then
+            pos = i
+            exit
+        endif
+    enddo
+
+end subroutine findUnit
 
 end module io
