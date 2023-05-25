@@ -23,7 +23,7 @@ module parameters
         !-------------------------
         integer :: max_cycles = 100
         integer :: chrg = 0
-
+        integer :: nalphabeta = 0
         !-------------------------
         !           scf
         !-------------------------

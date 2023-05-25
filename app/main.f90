@@ -34,9 +34,9 @@ subroutine scfMain(env,args)
     integer :: err 
         !! unit for error handling
 
-    !----------------------------------------------
-    !> read command line arguments and files
-    !----------------------------------------------
+    !-----------------------------------------------------
+    !> read command line arguments and configuration files
+    !-----------------------------------------------------
     call parse(env,args,h2) 
 
     nFiles = args%countFiles()
@@ -72,7 +72,28 @@ subroutine scfMain(env,args)
         endif
     endif
 
-    call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG")
+    !> .UHF
+    call open_file(fileID,'.UHF','r')
+
+    if (fileID.ne.-1) then
+        call get_line(fileID,dummy,stat=err)
+        if (err /= 0) then
+            call env%error('.UHF is empty')
+        else 
+            call set_spin(env,dummy)
+            call close_file(fileID)
+        endif
+    endif
+
+    call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG or .UHF")
+    
+    !----------------------------------------------------------------
+    !> First user interaction: peint the banner and compilation date
+    !----------------------------------------------------------------
+
+    call scf_header(env%unit)
+
+
 
 end subroutine scfMain
 

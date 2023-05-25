@@ -50,4 +50,36 @@ subroutine set_chrg(env,chrg)
 
 endsubroutine set_chrg
 
+!-----------------------------
+!> unrestricted case
+!-----------------------------
+subroutine set_spin(env,val)
+    
+    !> consts
+    character(len=*), parameter :: source = "set_spin"
+
+    !> dummy args list
+    type(type_environment), intent(inout) :: env
+        !! calc env
+    character(len=*), intent(in) :: val
+        !! raw value of the str
+
+    !> local vars
+    logical, save :: set1 = .true.
+        !! to remember the first assighned value
+    integer :: idum
+        !! tmp for integer
+
+    if (set1) then
+        if (get_value(env,val,idum)) then
+            set%nalphabeta = idum
+        else 
+            call env%error('Spin could not be read from the .UHF file', source)
+        endif
+    endif
+
+    set1=.false.
+
+end subroutine set_spin
+
 end module setmod
