@@ -15,7 +15,7 @@ program hf
     !! runMode of program
 
   call lib_init('scf',10,.true.)
-    !! to allocate persistentEnv
+    !! initialize the persistentEnv and time
 
   call init(env)
     !! initialiaze environment

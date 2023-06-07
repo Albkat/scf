@@ -12,7 +12,7 @@ subroutine lib_init(prog,ntimer,verbose)
     !> initilize the system time
     call start_timing_run
     call init_timing(ntimer,level=verbose)
-    call strat_timing(1)
+    call start_timing(1)
 
 
     allocate(persistentEnv)
