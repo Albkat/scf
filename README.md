@@ -5,4 +5,6 @@ Language: **Fortran**
 
 Build system: **fpm**
 
+`fpm build`
+
 Description: program structure was entirely adopted from `xtb`.
