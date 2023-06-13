@@ -24,6 +24,7 @@ contains
 !------------------------------------------
 subroutine start_timing_run
     call date_and_time(start_date,start_time, start_zone, start_values)
+    print*, start_time(:2)
 end subroutine start_timing_run
 
 !------------------------------------------
@@ -68,7 +69,7 @@ function print_timestring(mode) result(str)
     implicit none
     !> consts
     character(len=*), parameter :: fmt= &
-    & '(a,''/'',a,''/'',a,1x,a'':'',a,'':'',a)'
+    & '(a,''/'',a,''/'',a,1x,''at'',1x,a,'':'',a,'':'',a)'
         !! output format
     
     !> dummy arg list

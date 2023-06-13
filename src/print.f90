@@ -51,7 +51,7 @@ subroutine date(unitID,mode)
     use time, only : print_timestring
     implicit none
     !> dummy arg list
-    character, intent(in) :: unitID
+    integer, intent(in) :: unitID
         !! I/O unit
     character, intent(in) :: mode 
         !! start/current/end
@@ -59,6 +59,7 @@ subroutine date(unitID,mode)
     !> local vars
     character(len=*), parameter :: outfmt='('' * '',a,1x,a)'
 
+    
     selectcase(mode)
     case('S','s')
         write(unitID,outfmt) 'Launch Time', print_timestring(mode)

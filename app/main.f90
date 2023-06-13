@@ -34,6 +34,10 @@ subroutine scfMain(env,args)
     integer :: err 
         !! unit for error handling
 
+    !> wrapper types to bundle information together
+    type(type_molecule) :: mol
+        !! 
+
     !-----------------------------------------------------
     !> read command line arguments and configuration files
     !-----------------------------------------------------
@@ -98,6 +102,14 @@ subroutine scfMain(env,args)
     !> print current time
     call date(env%unit,'S')
 
+    
+    !----------------------------------------------------------------
+    !> Process input geometry
+    !----------------------------------------------------------------
+    if (h2) then 
+        file_name = 'h2'
+        call get_h2(mol)
+    endif
 
 end subroutine scfMain
 
