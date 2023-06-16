@@ -3,6 +3,7 @@ module scf_main
     use setmod
     use cml_parser, only : type_parser
     use systools, only : get_line
+    use molecule
     implicit none
     private
     public :: scfMain
