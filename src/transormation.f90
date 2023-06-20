@@ -1,8 +1,11 @@
 module transformation
     implicit none
-    public :: toSymbol
+    public :: toSymbol, symbol_length
     private
-    
+
+    integer, parameter :: symbol_length = 4
+        !! maximum allowed element length
+
     !> Periodic system of elements
     character(len=2), parameter :: pse(118) = [ &
     & 'H ','He', &
