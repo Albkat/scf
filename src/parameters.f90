@@ -1,4 +1,5 @@
 module parameters
+    use iso_fortran_env, only : wp => real64
     implicit none
     public 
     !> Runtyps
@@ -22,7 +23,8 @@ module parameters
         !           general
         !-------------------------
         integer :: max_cycles = 100
-        integer :: chrg = 0
+        integer :: chrg = 0 
+        integer :: uhf = 0
         integer :: nalphabeta = 0
         !-------------------------
         !           scf

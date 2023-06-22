@@ -41,7 +41,7 @@ subroutine disclaimer(unitID)
 
     write(unitID,'(a)') &
     "scf is free software: you can modify and redistribute ", &
-    "it under the terms of the GBU GPL as published by the ", &
+    "it under the terms of the GNU GPL as published by the ", &
     "Free Software Foundation either version 3, or any later.", &
     ""
 end subroutine disclaimer
