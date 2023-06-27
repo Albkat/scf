@@ -28,6 +28,8 @@ subroutine scfMain(env,args)
         !! to get h2.in molecule for debugging
     character(len=:), allocatable :: file_name
         !! file name of the mol geo
+    character(len=:), allocatable :: dir, base,  ext
+        !! for meta data
     character(len=:), allocatable :: dummy 
         !! tmp variable to store string data
     integer :: fileID 
@@ -110,6 +112,10 @@ subroutine scfMain(env,args)
     if (h2) then 
         file_name = 'h2'
         call get_h2(mol)
+        call generateMeta(file_name, dir, base, ext)
+    else 
+
+        call generateMeta(file_name, dir, base, ext)
     endif
 
 end subroutine scfMain

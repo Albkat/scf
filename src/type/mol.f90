@@ -101,6 +101,7 @@ subroutine initMolecule(mol,at,sym,xyz)
     
     call mol%set_nuclear_charges
     call mol%calculate_distance
+
 end subroutine initMolecule
 
 subroutine allocate_molecule(self,numAt)

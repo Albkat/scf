@@ -1,0 +1,38 @@
+[33m4547a66[m[33m ([m[1;36mHEAD -> [m[1;32mcore[m[33m, [m[1;31morigin/core[m[33m)[m calculate distance
+[33m6fcbe58[m add initMolecule
+[33m1ff4009[m add transfer from number o symbols of PSE
+[33me7e4f76[m get_h2 for debugging
+[33m20cacb9[m fixed timing && start molecular input analyzer
+[33md05838b[m Update README.md
+[33m552a028[m timing init
+[33m0ce4132[m updates for timing
+[33m82905c4[m gituhub actions
+[33m53578e8[m print disclaimer
+[33mb207672[m[33m ([m[1;33mtag: 0.1[m[33m)[m Update README.md
+[33mbaf5d5f[m Update README.md
+[33mb95f1a3[m printing the first steps
+[33m6841780[m open .CHRG
+[33m4ac9fca[m add writeing and reading to file
+[33m7bfed0b[m checkpoint is added
+[33mf384cc3[m add help information
+[33m42eeefe[m add --help option
+[33mde81804[m take only the last geometry
+[33me9b7992[m new parameters
+[33mbbd079a[m add general settings
+[33ma062a56[m add printlevels
+[33m1349143[m add the tuntyps
+[33m0a36dc3[m added runtyps
+[33maf5d6dd[m Update README.md
+[33m39108a2[m some changes in env
+[33m1fb9961[m parser flags
+[33meb8db21[m Update README.md
+[33m243dfff[m add sub  parse
+[33mc3fa674[m add cub scfMain
+[33mdb18801[m add initialization calc env
+[33m12f9a9d[m add global persistentEnv
+[33mc01d355[m some changes to env
+[33m44fc08c[m some details to env
+[33mf000e5c[m env added
+[33mb763a84[m add flag reader and submodules
+[33m47ad9ac[m Parser functionality
+[33mfcc046e[m initial commit

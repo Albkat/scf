@@ -24,7 +24,6 @@ contains
 !------------------------------------------
 subroutine start_timing_run
     call date_and_time(start_date,start_time, start_zone, start_values)
-    print*, start_time(:2)
 end subroutine start_timing_run
 
 !------------------------------------------

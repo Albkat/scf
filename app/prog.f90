@@ -13,7 +13,6 @@ program hf
   
   integer :: rMode
     !! runMode of program
-
   call lib_init('scf',10,.true.)
     !! initialize the persistentEnv and time
 
