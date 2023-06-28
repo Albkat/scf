@@ -4,6 +4,7 @@ module scf_main
     use cml_parser, only : type_parser
     use systools, only : get_line
     use molecule
+    use file
     implicit none
     private
     public :: scfMain
@@ -36,10 +37,10 @@ subroutine scfMain(env,args)
         !! the random unit number for I/O operations
     integer :: err 
         !! unit for error handling
-
+    integer :: ftype
     !> wrapper types to bundle information together
     type(type_molecule) :: mol
-        !! 
+        !!  mol str info 
 
     !-----------------------------------------------------
     !> read command line arguments and configuration files
@@ -110,12 +111,15 @@ subroutine scfMain(env,args)
     !> Process input geometry
     !----------------------------------------------------------------
     if (h2) then 
-        file_name = 'h2'
         call get_h2(mol)
         call generateMeta(file_name, dir, base, ext)
     else 
-
         call generateMeta(file_name, dir, base, ext)
+        ftype=getFiletype(file_name)
+        call open_file(fileID, file_name, 'r')
+        call read_molecule(env,mol,fileID,ftype)
+        call close_file(fileID)
+
     endif
 
 end subroutine scfMain

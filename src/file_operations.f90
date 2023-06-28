@@ -1,3 +1,21 @@
+module file
+
+    implicit none
+    private
+    public :: open_file, close_file, generateMeta, getFiletype
+    type :: filetypes
+
+        integer :: unknown = 0
+            !! unknown type
+
+        integer :: in = 1
+            !! QC2 file in
+    
+    end type filetypes
+
+    type(filetypes), parameter :: filetype = filetypes()
+        !! create instance of filetypes 
+contains
 subroutine open_file(unitID,fname,status)
     use global, only : persistentEnv
     implicit none
@@ -49,8 +67,6 @@ subroutine generateMeta(fname, directory, base, ext)
     iSlash = index(fname, '/',back=.true.)
 
     if (iSlash > 0) then
-        !allocate(directory)
-       
         directory = fname(:iSlash)
     else
         directory = ''
@@ -70,3 +86,39 @@ subroutine generateMeta(fname, directory, base, ext)
     endif
 
 endsubroutine generateMeta
+
+function getFiletype(str) result(ftype)
+    use chartools, only : to_lowercase
+
+    character(len=*), intent(in) :: str
+        !! input file
+
+    integer :: ftype
+        !! file type
+     
+    integer :: iDot, iSlash 
+        !! postion of dot and slash
+    
+    ftype = filetype%unknown
+        !! default 
+    iDot    = index(str,'.',back=.true.)
+        !! find dot
+    iSlash  = scan(str,'\/',back=.true.)
+        !! find \/
+
+    if (iDot > iSlash .and. iDot>0) then
+        !! if the fot comes after slash
+        select case(to_lowercase(str(iDot+1:)))
+        case('in')
+            ftype = filetype%in
+        endselect
+        if (ftype /= filetype%unknown) return
+            !! end here if extension is present
+    else 
+        idot= len(str)+1
+            !! for h2
+    endif
+
+
+end function getFiletype
+end module file
