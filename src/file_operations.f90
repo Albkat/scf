@@ -2,7 +2,7 @@ module file
 
     implicit none
     private
-    public :: open_file, close_file, generateMeta, getFiletype
+    public :: open_file, close_file, generateMeta, getFiletype, filetype
     type :: filetypes
 
         integer :: unknown = 0

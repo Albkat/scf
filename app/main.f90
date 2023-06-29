@@ -5,6 +5,7 @@ module scf_main
     use systools, only : get_line
     use molecule
     use file
+    use reading, only : read_molecule
     implicit none
     private
     public :: scfMain

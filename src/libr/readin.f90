@@ -1,14 +1,16 @@
 module reading
-    
+    use file, only : filetype
     use environment, only : type_environment
     use molecule, only : type_molecule
+    use in, only : read_in
     implicit none
     
     !> Return logical
     interface get_value
         module procedure :: get_intvalue
     end interface
-
+    
+    !> blueprint for the procedures specifying the signature of a procedure
     abstract interface 
         !> read molecular structure data 
         subroutine structure_reader(self, unit, error)
@@ -72,16 +74,38 @@ subroutine read_molecule(env,mol,unit,ftype)
         !! extension
 
     type(type_molecule) :: tmp
-    integer :: ft 
+    character(len=:), allocatable :: error 
+
 
     procedure(structure_reader), pointer :: reader
 
     call get_structure_reader(reader,ftype)
-    
+    if (.not.associated(reader)) then
+        call env%error("Cannot read from unknown file format", source)
+        return  
+    endif
 
+    call reader(tmp, unit, error)
+    !mol = tmp 
+    mol%ftype = ftype
 
 endsubroutine read_molecule
 
-subroutine
+!> retrieve reader for corresponding file type
+subroutine get_structure_reader(reader, ftype)
+
+    procedure(structure_reader), pointer, intent(out) :: reader
+        !! reader for the specified  file type
+
+    integer, intent(in) :: ftype
+
+    nullify(reader)
+
+    select case(ftype)
+    case(filetype%in)    
+        reader => read_in 
+    end select
+
+end subroutine get_structure_reader
 
 endmodule reading

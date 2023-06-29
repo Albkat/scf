@@ -16,6 +16,9 @@ module molecule
         integer :: n = 0
             !! number of atoms
         
+        integer :: nel = 0
+            !! number of electrons 
+
         integer :: uhf = 0
             !! number of unpaired electrons
 
@@ -36,6 +39,9 @@ module molecule
 
         real(wp),allocatable :: dist(:,:)
             !! interatomic distances
+
+        integer :: ftype
+            !! file type
 
     contains
         procedure :: allocate => allocate_molecule    
