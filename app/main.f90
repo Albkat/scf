@@ -120,7 +120,7 @@ subroutine scfMain(env,args)
         call open_file(fileID, file_name, 'r')
         call read_molecule(env,mol,fileID,ftype)
         call close_file(fileID)
-
+        call env%checkpoint("reading geometry input '"//file_name//"' failed")
     endif
 
 end subroutine scfMain

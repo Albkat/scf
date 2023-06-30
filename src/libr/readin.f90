@@ -86,6 +86,12 @@ subroutine read_molecule(env,mol,unit,ftype)
     endif
 
     call reader(tmp, unit, error)
+
+    if (allocated(error)) then
+        call env%error(error,source)
+        return
+    endif
+
     !mol = tmp 
     mol%ftype = ftype
 

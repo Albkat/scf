@@ -295,7 +295,6 @@ subroutine next_token(str,pos,token)
     enddo
 
     token = type_token(start,pos)
-
 end subroutine next_token
 subroutine read_token_int(line, token, val, iostat, iomsg)
 
@@ -327,7 +326,7 @@ subroutine read_token_real(line, token, val, iostat, iomsg)
     character(len=:), allocatable, optional, intent(out) :: iomsg
 
     character(len=512) :: msg
-
+    print*,line(token%first:token%last)
     if (token%first > 0 .and. token%last <= len(line)) then
         read(line(token%first:token%last), *, iostat=iostat, iomsg=msg) val
     else 
