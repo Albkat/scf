@@ -26,7 +26,8 @@ subroutine read_in(self, unit, error)
     integer :: n,nel
     integer :: nbf, i
     integer :: rows
-    real(wp), allocatable :: xyz(:,:),z(:), x,y,zz
+    real(wp),allocatable :: xyz(:,:),z(:)
+    real(wp) :: x, y, zz
 
     lnum=0
     call next_line(unit, fline, pos, lnum, stat, error)
@@ -61,15 +62,15 @@ subroutine read_in(self, unit, error)
 
     rows = n+nbf
     do i= 1, n
-        call next_line(unit,fline, pos, lnum, stat)
-        if (is_iostat_end(stat)) exit 
-        if (stat /= 0) then
-            error = "could not read geometry from in file"
-            return
-        endif
-        call read_next_token(fline,pos, tnat,x,stat)
-        print*,x
-    enddo
+      call next_line(unit,fline, pos, lnum, stat)
+      if (is_iostat_end(stat)) exit 
+      if (stat /= 0) then
+         error = "could not read geometry from in file"
+         return
+      endif
+
+      call read_next_token(fline,pos, tnat,x,stat)
+   enddo
 
 
 
