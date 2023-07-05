@@ -56,8 +56,9 @@ function get_intvalue(env,val,dummy) result(stat)
 
 end function get_intvalue
 
-!> generic reader for mol str input  files
 subroutine read_molecule(env,mol,unit,ftype)
+    !! generic reader for mol str input  files
+    
     character(len=*), parameter :: source = 'readin_read_molecule'
         !! name of error producer
 
@@ -87,10 +88,10 @@ subroutine read_molecule(env,mol,unit,ftype)
 
     call reader(tmp, unit, error)
 
-    if (allocated(error)) then
-        call env%error(error,source)
-        return
-    endif
+   if (allocated(error)) then
+      call env%error(error,source)
+      return
+   endif
 
     !mol = tmp 
     mol%ftype = ftype

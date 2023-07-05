@@ -9,59 +9,70 @@ module in
 contains 
 
 subroutine read_in(self, unit, error)
-    character(len=*), parameter :: source = "format_readers/read_in"
+   character(len=*), parameter :: source = "format_readers/read_in"
 
-    type(type_molecule), intent(out) :: self 
-        !! instance of mol str data
-    
-    integer, intent(in) :: unit
-        !! file handle
+   type(type_molecule), intent(out) :: self 
+      !! instance of mol str data
+   
+   integer, intent(in) :: unit
+      !! file handle
 
-    character(len=:), allocatable, intent(out) :: error
-        !! error msg
+   character(len=:), allocatable, intent(out) :: error
+      !! error msg
 
-    type(type_token) :: tnat 
-    character(len=:), allocatable :: fline
-    integer :: pos, lnum, stat
-    integer :: n,nel
-    integer :: nbf, i
-    integer :: rows
-    real(wp),allocatable :: xyz(:,:),z(:)
-    real(wp) :: x, y, zz
+   type(type_token) :: tnat 
+   character(len=:), allocatable :: fline
+   integer :: pos, lnum, stat
+   integer :: n,nel
+   integer :: nbf, i
+   integer :: rows
+   real(wp),allocatable :: xyz(:,:),z(:)
+   real(wp) :: x, y, zz
 
-    lnum=0
-    call next_line(unit, fline, pos, lnum, stat, error)
-        !! retract line from unit without advance, pos = 0
-    if (allocated(error)) return
-    
-    call read_next_token(fline, pos, tnat, n, stat, error)
-        !! number of atoms
-    if (n < 1) then
-        error = "Please check your input, expected positive number of atoms"     
-        return
-    endif
-    
-    call read_next_token(fline, pos, tnat, nel, stat, error)
-        !! number of electrons
-    if (nel < 0) then
-        error = "Please check your input, number of electrons is expected to be a positive integer"
-        return
-    endif
-    
-    call read_next_token(fline, pos, tnat, nbf, stat, error)
-        !! number of Bf2
+   lnum=0
 
-    if (nbf < 0) then
-        error="Please check your input, number of basis functions is expected to be a positive integer"
-        return
-    endif
-    allocate(xyz(3,n))
-    allocate(z(n))
-    allocate(basisset%zeta(nbf)) 
-    allocate(basisset%aoat(nbf)) 
+   ! retract line from unit without advance, pos = 0 !
+   call next_line(unit, fline, pos, lnum, stat, error)
+   if (allocated(error)) return
+   
+   ! number of atoms !
+   
+   call read_next_token(fline, pos, tnat, n, stat, error)
+   if (allocated(error)) then
+      return
+   else if (n < 1) then
+      error = "Please check your input, expected positive number of atoms"     
+      return
+   endif
+   
+   ! number of electrons !
+   
+   call read_next_token(fline, pos, tnat, nel, stat, error)
+   if (allocated(error)) then
+      return
+   else if (nel < 0) then
+      error = "Please check your input, number of electrons is expected to be a positive integer"
+      return
+   endif
+   
+   ! number of Bf2 !
+   
+   call read_next_token(fline, pos, tnat, nbf, stat, error)
+   if (allocated(error)) then
+      return
+   else if (nbf < 0) then
+      error="Please check your input, number of basis functions is expected to be a positive integer"
+      return
+   endif
 
-    rows = n+nbf
-    do i= 1, n
+   
+   allocate(xyz(3,n))
+   allocate(z(n))
+   allocate(basisset%zeta(nbf)) 
+   allocate(basisset%aoat(nbf)) 
+
+   rows = n+nbf
+   do i= 1, n
       call next_line(unit,fline, pos, lnum, stat)
       if (is_iostat_end(stat)) exit 
       if (stat /= 0) then
@@ -69,7 +80,16 @@ subroutine read_in(self, unit, error)
          return
       endif
 
-      call read_next_token(fline,pos, tnat,x,stat)
+      call read_next_token(fline,pos,tnat,x,stat,error)
+      if (allocated(error)) return
+
+      call read_next_token(fline,pos,tnat,y,stat,error)
+      if (allocated(error)) return
+      
+      call read_next_token(fline,pos,tnat,zz,stat,error)
+      if (allocated(error)) return
+
+      
    enddo
 
 

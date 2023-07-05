@@ -225,16 +225,16 @@ end subroutine getline
 
 subroutine read_next_token_int(line,pos,token,val,iostat, iomsg)
     
-    character(len=*), intent(in) :: line
-    integer, intent(inout) :: pos
-    type(type_token), intent(inout) :: token
-    integer, intent(out) :: val
-    integer, intent(out) :: iostat
-    character(len=:), allocatable, intent(out), optional :: iomsg
-
-    call next_token(line, pos, token)
-        !! get token(postions)
-    call read_token(line, token, val, iostat, iomsg)
+   character(len=*), intent(in) :: line
+   integer, intent(inout) :: pos
+   type(type_token), intent(inout) :: token
+   integer, intent(out) :: val
+   integer, intent(out) :: iostat
+   character(len=:), allocatable :: iomsg
+   
+   ! get token(postions) !
+   call next_token(line, pos, token)
+   call read_token(line, token, val, iostat, iomsg)
 
 end subroutine read_next_token_int
 subroutine read_next_token_real(line,pos,token,val,iostat, iomsg)
@@ -244,7 +244,7 @@ subroutine read_next_token_real(line,pos,token,val,iostat, iomsg)
     type(type_token), intent(inout) :: token
     real(wp), intent(out) :: val
     integer, intent(out) :: iostat
-    character(len=:), allocatable, intent(out), optional :: iomsg
+    character(len=:), allocatable :: iomsg
 
     call next_token(line, pos, token)
         !! get token(postions)
@@ -297,24 +297,28 @@ subroutine next_token(str,pos,token)
 
     token = type_token(start,pos)
 end subroutine next_token
+
 subroutine read_token_int(line, token, val, iostat, iomsg)
 
     character(len=*), intent(in) :: line
     type(type_token), intent(in) :: token
     integer, intent(out) :: val
     integer, intent(out) :: iostat
-    character(len=:), allocatable, optional, intent(out) :: iomsg
+    character(len=:), allocatable, optional :: iomsg
 
     character(len=512) :: msg
 
-    if (token%first > 0 .and. token%last <= len(line)) then
-        read(line(token%first:token%last), *, iostat=iostat, iomsg=msg) val
-    else 
-        iostat = 1
-        msg = 'No input found'
-    endif
+   if (token%first > 0 .and. token%last <= len(line)) then
+      read(line(token%first:token%last), *, iostat=iostat, iomsg=msg) val
+   else 
+      iostat = 1
+      msg = 'No input found'
+   endif
+   
+   if (iostat/=0) then
+      iomsg = trim(msg)
+   endif
     
-    if (present(iomsg)) iomsg = trim(msg)
 
 end subroutine read_token_int
 
@@ -324,7 +328,7 @@ subroutine read_token_real(line, token, val, iostat, iomsg)
    type(type_token), intent(in) :: token
    real(wp), intent(out) :: val
    integer, intent(out) :: iostat
-   character(len=:), allocatable, optional, intent(out) :: iomsg
+   character(len=:), allocatable  :: iomsg
 
    character(len=512) :: msg
    if (token%first > 0 .and. token%last <= len(line)) then
@@ -334,7 +338,9 @@ subroutine read_token_real(line, token, val, iostat, iomsg)
       msg = 'No input found'
    endif
 
-   if (present(iomsg)) iomsg = trim(msg)
+   if (iostat/=0) then 
+      iomsg = trim(msg)
+   endif
 
 end subroutine read_token_real
 end module chartools
