@@ -57,36 +57,37 @@ function get_intvalue(env,val,dummy) result(stat)
 end function get_intvalue
 
 subroutine read_molecule(env,mol,unit,ftype)
-    !! generic reader for mol str input  files
-    
-    character(len=*), parameter :: source = 'readin_read_molecule'
-        !! name of error producer
+   !! generic reader for mol str input  files
+   
+   character(len=*), parameter :: source = 'readin_read_molecule'
+      !! name of error producer
 
-    class(type_environment), intent(inout) :: env
-        !! instance of calc env
+   class(type_environment), intent(inout) :: env
+      !! instance of calc env
 
-    class(type_molecule), intent(out) :: mol 
-        !! mol str data
+   class(type_molecule), intent(out) :: mol 
+      !! mol str data
 
-    integer, intent(in) :: unit
-        !! I/O unit for input file
+   integer, intent(in) :: unit
+      !! I/O unit for input file
 
-    integer, intent(in) :: ftype
-        !! extension
+   integer, intent(in) :: ftype
+      !! extension
 
-    type(type_molecule) :: tmp
-    character(len=:), allocatable :: error 
+   type(type_molecule) :: tmp
+   character(len=:), allocatable :: error 
 
 
-    procedure(structure_reader), pointer :: reader
+   procedure(structure_reader), pointer :: reader
 
-    call get_structure_reader(reader,ftype)
-    if (.not.associated(reader)) then
-        call env%error("Cannot read from unknown file format", source)
-        return  
-    endif
+   call get_structure_reader(reader,ftype)
+   if (.not.associated(reader)) then
+      call env%error("Cannot read from unknown file format", source)
+      return  
+   endif
 
-    call reader(tmp, unit, error)
+   ! actual subroutine that processes the input !
+   call reader(tmp, unit, error)
 
    if (allocated(error)) then
       call env%error(error,source)

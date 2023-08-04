@@ -35,8 +35,12 @@ subroutine read_in(self, unit, error)
    call next_line(unit, fline, pos, lnum, stat, error)
    if (allocated(error)) return
    
+   print*,"pos",pos
+   print*,"fline",fline
+   print*,"lnum",lnum
+   print*,"stat",stat
+   stop
    ! number of atoms !
-   
    call read_next_token(fline, pos, tnat, n, stat, error)
    if (allocated(error)) then
       return
