@@ -256,46 +256,50 @@ end subroutine read_next_token_real
 !> advance pointer to next token
 subroutine next_token(str,pos,token)
 
-    character(len=*), intent(in) :: str
-        !! string to check
-    integer, intent(inout) :: pos
-        !! current position in str
-    type(type_token), intent(out) :: token
-        !! tokem found
-    
-    integer :: start
-    
-    if (pos >= len(str)) then
-        token = type_token(len(str)+1,len(str)+1)
-            !! no token if pos bigger
-        return
-    end if
+   character(len=*), intent(in) :: str
+      !! string to check
+   integer, intent(inout) :: pos
+      !! current position in str
+   type(type_token), intent(out) :: token
+      !! tokem found
+   
+   integer :: start
+   
+   if (pos >= len(str)) then
+      token = type_token(len(str)+1,len(str)+1)
+         !! no token if pos bigger
+      return
+   end if
 
-    do while(pos < len(str))
-        pos = pos + 1
-            !! move character by character
-        select case(str(pos:pos))
-        case(' ', achar(9), achar(10), achar(13))
-            continue
-        !> if something not a space tab, newline, or carriage return encountered -> exit
-        case default
-            exit 
-        end select
-    enddo
+   do while(pos < len(str))
+      
+      ! move character by character !
+      pos = pos + 1
 
-    start = pos
-    do while(pos < len(str))
-        pos = pos + 1
-        select case(str(pos:pos))
-        case(' ', achar(9), achar(10),achar(13))
-            pos = pos - 1
-            exit    
-        case default
-            continue
-        end select
-    enddo
+      select case(str(pos:pos))
+      case(' ', achar(9), achar(10), achar(13))
+         continue
+      
+         ! if something not a space tab !
+         ! newline, or carriage return encountered -> exit !
+      case default
+         exit 
+      end select
+   enddo
 
-    token = type_token(start,pos)
+   start = pos
+   do while(pos < len(str))
+      pos = pos + 1
+      select case(str(pos:pos))
+      case(' ', achar(9), achar(10),achar(13))
+         pos = pos - 1
+         exit    
+      case default
+         continue
+      end select
+   enddo
+
+   token = type_token(start,pos)
 end subroutine next_token
 
 subroutine read_token_int(line, token, val, iostat, iomsg)

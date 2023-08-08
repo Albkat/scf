@@ -23,11 +23,11 @@ subroutine read_in(self, unit, error)
    type(type_token) :: tnat 
    character(len=:), allocatable :: fline
    integer :: pos, lnum, stat
-   integer :: n,nel
-   integer :: nbf, i
+   integer :: n, nel
+   integer :: nbf, i, atom_nbf, j 
    integer :: rows
-   real(wp),allocatable :: xyz(:,:),z(:)
-   real(wp) :: x, y, zz
+   real(wp),allocatable :: xyz(:,:), charge(:)
+   real(wp) :: x, y, z
 
    lnum=0
 
@@ -35,11 +35,6 @@ subroutine read_in(self, unit, error)
    call next_line(unit, fline, pos, lnum, stat, error)
    if (allocated(error)) return
    
-   print*,"pos",pos
-   print*,"fline",fline
-   print*,"lnum",lnum
-   print*,"stat",stat
-   stop
    ! number of atoms !
    call read_next_token(fline, pos, tnat, n, stat, error)
    if (allocated(error)) then
@@ -50,7 +45,6 @@ subroutine read_in(self, unit, error)
    endif
    
    ! number of electrons !
-   
    call read_next_token(fline, pos, tnat, nel, stat, error)
    if (allocated(error)) then
       return
@@ -60,7 +54,6 @@ subroutine read_in(self, unit, error)
    endif
    
    ! number of Bf2 !
-   
    call read_next_token(fline, pos, tnat, nbf, stat, error)
    if (allocated(error)) then
       return
@@ -71,7 +64,7 @@ subroutine read_in(self, unit, error)
 
    
    allocate(xyz(3,n))
-   allocate(z(n))
+   allocate(charge(n))
    allocate(basisset%zeta(nbf)) 
    allocate(basisset%aoat(nbf)) 
 
@@ -87,13 +80,29 @@ subroutine read_in(self, unit, error)
       call read_next_token(fline,pos,tnat,x,stat,error)
       if (allocated(error)) return
 
+      
       call read_next_token(fline,pos,tnat,y,stat,error)
       if (allocated(error)) return
       
-      call read_next_token(fline,pos,tnat,zz,stat,error)
+      call read_next_token(fline,pos,tnat,z,stat,error)
       if (allocated(error)) return
 
+      call read_next_token(fline,pos,tnat,charge(i),stat,error)
+      if (allocated(error)) return
+
+      call read_next_token(fline,pos,tnat,atom_nbf,stat,error)
+      if (allocated(error)) return
       
+      if (atom_nbf.ge.0) then
+         do j=1,atom_nbf
+            call next_line(unit,fline,pos,lnum,stat)
+         enddo
+      else
+         error = "The number of basis functions for atom cannot be negative"
+         return
+      endif
+      print*,atom_nbf
+      stop
    enddo
 
 
