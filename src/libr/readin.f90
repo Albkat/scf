@@ -65,7 +65,7 @@ subroutine read_molecule(env,mol,unit,ftype)
    class(type_environment), intent(inout) :: env
       !! instance of calc env
 
-   class(type_molecule), intent(out) :: mol 
+   type(type_molecule), intent(out) :: mol 
       !! mol str data
 
    integer, intent(in) :: unit
@@ -94,8 +94,9 @@ subroutine read_molecule(env,mol,unit,ftype)
       return
    endif
 
-    !mol = tmp 
-    mol%ftype = ftype
+   mol = tmp
+   print *,mol%xyz
+   
 
 endsubroutine read_molecule
 

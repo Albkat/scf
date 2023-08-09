@@ -22,12 +22,12 @@ subroutine read_in(self, unit, error)
 
    type(type_token) :: tnat 
    character(len=:), allocatable :: fline
-   integer :: pos, lnum, stat
+   integer :: pos, lnum, stat, zeta
    integer :: n, nel
    integer :: nbf, i, atom_nbf, j 
    integer :: rows
    real(wp),allocatable :: xyz(:,:), charge(:)
-   real(wp) :: x, y, z
+   real(wp) :: x, y, z, tmp
 
    lnum=0
 
@@ -65,10 +65,13 @@ subroutine read_in(self, unit, error)
    
    allocate(xyz(3,n))
    allocate(charge(n))
-   allocate(basisset%zeta(nbf)) 
-   allocate(basisset%aoat(nbf)) 
+   allocate(basisset%zeta(nbf), source=0.0_wp) 
+   allocate(basisset%aoat(nbf), source=0) 
 
    rows = n+nbf
+   
+   ! couter for STO !
+   zeta = 0
    do i= 1, n
       call next_line(unit,fline, pos, lnum, stat)
       if (is_iostat_end(stat)) exit 
@@ -87,6 +90,8 @@ subroutine read_in(self, unit, error)
       call read_next_token(fline,pos,tnat,z,stat,error)
       if (allocated(error)) return
 
+      xyz(:,i) = [x,y,z]
+
       call read_next_token(fline,pos,tnat,charge(i),stat,error)
       if (allocated(error)) return
 
@@ -95,20 +100,24 @@ subroutine read_in(self, unit, error)
       
       if (atom_nbf.ge.0) then
          do j=1,atom_nbf
-            call next_line(unit,fline,pos,lnum,stat)
+            call next_line(unit,fline,pos,lnum,stat,error)
+            if (allocated(error)) return
+            zeta = zeta + 1
+            if(zeta>nbf) then
+               error = "Number of slater exponents exceeds the first line argument"
+               return
+            endif
+            call read_next_token(fline,pos,tnat,basisset%zeta(zeta),stat,error)
+            if (allocated(error)) return
+            basisset%aoat(zeta) = i
          enddo
       else
          error = "The number of basis functions for atom cannot be negative"
          return
       endif
-      print*,atom_nbf
-      stop
+
    enddo
-
-
-
-
-
+   self%xyz=xyz
 end subroutine read_in
 
 end module in
