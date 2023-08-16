@@ -3,57 +3,58 @@
 !   nuclear and total charge, atomic masses
 
 module molecule
-    use iso_fortran_env, only : wp => real64
-    use transformation, only : toSymbol, symbol_length
-    implicit none
-    public :: type_molecule, init
+   use iso_fortran_env, only : wp => real64
+   use transformation, only : toSymbol, symbol_length
+   implicit none
+   public :: type_molecule, init
 
-    private
+   private
 
-    type :: type_molecule
-        !! molecular structure information
+   type :: type_molecule
+      !! molecular structure information
 
-        integer :: n = 0
-            !! number of atoms
-        
-        integer :: nel = 0
-            !! number of electrons 
+      integer :: n = 0
+         !! number of atoms
+      
+      integer :: nel = 0
+         !! number of electrons 
 
-        integer :: uhf = 0
-            !! number of unpaired electrons
+      integer :: uhf = 0
+         !! number of unpaired electrons
 
-        integer, allocatable :: at(:)
-            !! ordinal numbers
-        
-        real(wp), allocatable :: z(:)
-            !! nuclear charges
-        
-        real(wp), allocatable :: xyz(:,:)
-            !! cartesian coordinates in Bohr
-        
-        character(len=symbol_length), allocatable ::sym(:) 
-            !! element symbol
+      integer, allocatable :: at(:)
+         !! ordinal numbers
+      
+      real(wp), allocatable :: z(:)
+         !! nuclear charges
+      
+      real(wp), allocatable :: xyz(:,:)
+         !! cartesian coordinates in Bohr
+      
+      character(len=symbol_length), allocatable ::sym(:) 
+         !! element symbol
 
-        integer :: chrg
-            !! overall charge
+      integer :: chrg
+         !! overall charge
 
-        real(wp),allocatable :: dist(:,:)
-            !! interatomic distances
+      real(wp),allocatable :: dist(:,:)
+         !! interatomic distances
 
-        integer :: ftype
-            !! file type
+      integer :: ftype
+         !! file type
 
-    contains
-        procedure :: allocate => allocate_molecule    
-        procedure :: deallocate => deallocate_molecule    
-        procedure :: set_nuclear_charges 
-        procedure :: calculate_distance
-    end type type_molecule
+   contains
+      procedure :: allocate => allocate_molecule    
+      procedure :: deallocate => deallocate_molecule    
+      procedure :: set_nuclear_charges 
+      procedure :: calculate_distance
+   end type type_molecule
 
-    interface init
-        module procedure :: initMoleculeNumbers ! 1 station
-        module procedure :: initMolecule ! 2 station
-    endinterface init
+   interface init
+      module procedure :: initMoleculeNumbers ! 1 station
+      module procedure :: initMolecule ! 2 station
+   endinterface init
+
 contains
 
 subroutine initMoleculeNumbers(mol, at, xyz)
@@ -75,7 +76,7 @@ subroutine initMoleculeNumbers(mol, at, xyz)
     sym(:) = toSymbol(at(:nAt))
     
     call init(mol,at,sym,xyz)
-        !! got to initMoleculeSymbols
+        !! go to initMoleculeSymbols
 
 end subroutine initMoleculeNumbers
 

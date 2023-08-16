@@ -1,6 +1,7 @@
 module in
     use basis, only : basisset
-    use molecule, only : type_molecule
+    use transformation, only : symbol_length
+    use molecule, only : type_molecule, init
     use chartools, only : next_line, read_next_token, type_token
     use iso_fortran_env,  only : wp => real64
     implicit none
@@ -22,6 +23,7 @@ subroutine read_in(self, unit, error)
 
    type(type_token) :: tnat 
    character(len=:), allocatable :: fline
+   integer, allocatable :: at(:)
    integer :: pos, lnum, stat, zeta
    integer :: n, nel
    integer :: nbf, i, atom_nbf, j 
@@ -62,9 +64,11 @@ subroutine read_in(self, unit, error)
       return
    endif
 
-   
-   allocate(xyz(3,n))
-   allocate(charge(n))
+   basisset%nbf = nbf
+
+   allocate(xyz(3,n), source=0.0_wp)
+   allocate(at(n), source=0)
+   allocate(charge(n), source=0.0_wp)
    allocate(basisset%zeta(nbf), source=0.0_wp) 
    allocate(basisset%aoat(nbf), source=0) 
 
@@ -95,6 +99,8 @@ subroutine read_in(self, unit, error)
       call read_next_token(fline,pos,tnat,charge(i),stat,error)
       if (allocated(error)) return
 
+      at(i)=nint(charge(i))
+
       call read_next_token(fline,pos,tnat,atom_nbf,stat,error)
       if (allocated(error)) return
       
@@ -117,7 +123,8 @@ subroutine read_in(self, unit, error)
       endif
 
    enddo
-   self%xyz=xyz
+   call init(self,at,xyz)
+   
 end subroutine read_in
 
 end module in

@@ -95,8 +95,6 @@ subroutine read_molecule(env,mol,unit,ftype)
    endif
 
    mol = tmp
-   print *,mol%xyz
-   
 
 endsubroutine read_molecule
 
