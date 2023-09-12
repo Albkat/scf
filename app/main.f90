@@ -13,116 +13,121 @@ module scf_main
 contains
 
 subroutine scfMain(env,args)
-    character(len=*), parameter :: source = "app_main"
+   
+   implicit none
+   character(len=*), parameter :: source = "app_main"
 
-    type(type_environment), intent(inout) :: env
-        !! instance of the calc env
+   type(type_environment), intent(inout) :: env
+      !! instance of the calc env
 
-    type(type_parser), intent(inout) :: args
-        !! cml parser
+   type(type_parser), intent(inout) :: args
+      !! cml parser
 
-    !> local var
-    integer :: nFiles
-        !! number of files provided
-    integer :: iFile
-        !! file iterator
-    logical :: h2
-        !! to get h2.in molecule for debugging
-    character(len=:), allocatable :: file_name
-        !! file name of the mol geo
-    character(len=:), allocatable :: dir, base,  ext
-        !! for meta data
-    character(len=:), allocatable :: dummy 
-        !! tmp variable to store string data
-    integer :: fileID 
-        !! the random unit number for I/O operations
-    integer :: err 
-        !! unit for error handling
-    integer :: ftype
-    !> wrapper types to bundle information together
-    type(type_molecule) :: mol
-        !!  mol str info 
+   !> local var
+   integer :: nFiles
+      !! number of files provided
+   integer :: iFile
+      !! file iterator
+   logical :: h2
+      !! to get h2.in molecule for debugging
+   character(len=:), allocatable :: file_name
+      !! file name of the mol geo
+   character(len=:), allocatable :: dir, base,  ext
+      !! for meta data
+   character(len=:), allocatable :: dummy 
+      !! tmp variable to store string data
+   integer :: fileID 
+      !! the random unit number for I/O operations
+   integer :: err 
+      !! unit for error handling
+   integer :: ftype
+   !> wrapper types to bundle information together
+   type(type_molecule) :: mol
+      !!  mol str info 
 
-    !-----------------------------------------------------
-    !> read command line arguments and configuration files
-    !-----------------------------------------------------
-    call parse(env,args,h2) 
+   !-----------------------------------------------------
+   !> read command line arguments and configuration files
+   !-----------------------------------------------------
+   call parse(env,args,h2) 
 
-    nFiles = args%countFiles()
-    !> Check how many files, or should default h2.in be used
-    select case(nFiles)
-    case(0)
-        if (.not. h2) then
-            call env%error("No input file given, so there is nothing to do", source)
-        else
-            file_name = 'h2'
-        endif
-    case(1:)
-        do iFile =1 ,nFiles-1
-            call args%nextFile(file_name)
-            call env%warning("Input file '"//file_name//"' will be ignored", source)
-        enddo
-        call args%nextFile(file_name)
-    end select
+   nFiles = args%countFiles()
+   !> Check how many files, or should default h2.in be used
+   select case(nFiles)
+   case(0)
+      if (.not. h2) then
+         call env%error("No input file given, so there is nothing to do", source)
+      else
+         file_name = 'h2'
+      endif
+   case(1:)
+      do iFile =1 ,nFiles-1
+         call args%nextFile(file_name)
+         call env%warning("Input file '"//file_name//"' will be ignored", source)
+      enddo
+      call args%nextFile(file_name)
+   end select
 
-    call env%checkpoint("CML parsing failed")
+   call env%checkpoint("CML parsing failed")
 
-    !> Reading the dot(.) files
-    !> .CHRG
-    call open_file(fileID,'.CHRG','r')
-    
-    if (fileID.ne.-1) then
-        call get_line(fileID,dummy,stat=err)
-        if (err /= 0) then
-            call env%error(".CHRG is empty", source)
-        else 
-            call set_chrg(env,dummy)
-            call close_file(fileID)
-        endif
-    endif
+   !> Reading the dot(.) files
+   !> .CHRG
+   call open_file(fileID,'.CHRG','r')
+   
+   if (fileID.ne.-1) then
+      call get_line(fileID,dummy,stat=err)
+      if (err /= 0) then
+         call env%error(".CHRG is empty", source)
+      else 
+         call set_chrg(env,dummy)
+         call close_file(fileID)
+      endif
+   endif
 
-    !> .UHF
-    call open_file(fileID,'.UHF','r')
+   !> .UHF
+   call open_file(fileID,'.UHF','r')
 
-    if (fileID.ne.-1) then
-        call get_line(fileID,dummy,stat=err)
-        if (err /= 0) then
-            call env%error('.UHF is empty')
-        else 
-            call set_spin(env,dummy)
-            call close_file(fileID)
-        endif
-    endif
+   if (fileID.ne.-1) then
+      call get_line(fileID,dummy,stat=err)
+      if (err /= 0) then
+         call env%error('.UHF is empty')
+      else 
+         call set_spin(env,dummy)
+         call close_file(fileID)
+      endif
+   endif
 
-    call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG or .UHF")
+   call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG or .UHF")
 
-    !----------------------------------------------------------------
-    !> First user interaction: print the banner
-    !----------------------------------------------------------------
-    call scf_header(env%unit)
+   !----------------------------------------------------------------
+   !> First user interaction: print the banner
+   !----------------------------------------------------------------
+   call scf_header(env%unit)
 
-    !> to switch responsibility from me onto you
-    call disclaimer(env%unit)
+   !> to switch responsibility from me onto you
+   call disclaimer(env%unit)
 
-    !> print current time
-    call date(env%unit,'S')
+   !> print current time
+   call date(env%unit,'S')
+   
+   !------------!
+   ! READ INPUT ! 
+   !------------!
+   
+   ! deafult 
+   if (h2) then 
+      call get_h2(mol)
+      call generateMeta(file_name, dir, base, ext)
+   else 
+      call generateMeta(file_name, dir, base, ext)
+      ftype=getFiletype(file_name)
+      call open_file(fileID, file_name, 'r')
+      call read_molecule(env,mol,fileID,ftype)
+      call close_file(fileID)
+      call env%checkpoint("reading geometry input '"//file_name//"' failed")
+   endif
 
-    
-    !----------------------------------------------------------------
-    !> Process input geometry
-    !----------------------------------------------------------------
-    if (h2) then 
-        call get_h2(mol)
-        call generateMeta(file_name, dir, base, ext)
-    else 
-        call generateMeta(file_name, dir, base, ext)
-        ftype=getFiletype(file_name)
-        call open_file(fileID, file_name, 'r')
-        call read_molecule(env,mol,fileID,ftype)
-        call close_file(fileID)
-        call env%checkpoint("reading geometry input '"//file_name//"' failed")
-    endif
 
+   
 end subroutine scfMain
 
 

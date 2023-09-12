@@ -124,6 +124,7 @@ subroutine read_in(self, unit, error)
 
    enddo
    call init(self,at,xyz)
+
    
 end subroutine read_in
 
