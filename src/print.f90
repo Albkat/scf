@@ -1,6 +1,9 @@
-!----------------------------
+module print_
+   implicit none
+
+contains
+
 !> print header
-!----------------------------
 subroutine scf_header(unitID)
     
     implicit none
@@ -19,7 +22,7 @@ subroutine scf_header(unitID)
 
 end subroutine scf_header
 
-!############IMPLEMENT
+!IMPLEMENT!
 !----------------------------
 !> print version 
 !----------------------------
@@ -70,3 +73,60 @@ subroutine date(unitID,mode)
     endselect
 
 end subroutine date
+
+subroutine print_setup(iunit,n,fname)
+
+   !> I/O unit
+   integer, intent(in) :: iunit
+
+   !> number of atoms
+   integer, intent(in) :: n
+
+   !> coordinate file
+   character(len=*), intent(in) :: fname
+
+   ! header !
+   write(iunit,'(a)')
+   call generic_header(iunit,'Calculation Settings', 49, 10)
+
+end subroutine print_setup
+
+subroutine generic_header(iunit,string,width,offset)
+
+   !> I/O unit
+   integer, intent(in) :: iunit
+
+   !> header text
+   character(len=*), intent(in) :: string
+
+   !> total header width
+   integer, intent(in) :: width
+
+   !> indentation
+   integer, intent(in) :: offset
+   
+   !> length of raw text
+   integer :: strlen
+
+   !> no. characters to place before and after header text
+   integer :: ifront, iback
+
+   !> header formatted string
+   character(len=:), allocatable :: strformat
+
+   !> dummys 
+   character(len=width) :: idum1
+   character(len=width) :: idum2
+
+   strlen = len(string)
+   ifront = (width - strlen) / 2
+   iback  = width - ifront - strlen 
+
+   write(idum1,i0) width
+   write(idum2,i0) offset
+   write(strformat, '(" |",', ifront, 'x,a,',iback, 'x,'' | '')' ) string
+
+   print*,strformat
+end subroutine generic_header
+
+endmodule print_

@@ -6,6 +6,7 @@ module scf_main
     use molecule
     use file
     use reading, only : read_molecule
+    use print_
     implicit none
     private
     public :: scfMain
@@ -103,17 +104,17 @@ subroutine scfMain(env,args)
    !----------------------------------------------------------------
    call scf_header(env%unit)
 
-   !> to switch responsibility from me onto you
+   ! to switch responsibility from me onto you !
    call disclaimer(env%unit)
 
-   !> print current time
+   ! print current time !
    call date(env%unit,'S')
    
    !------------!
    ! READ INPUT ! 
    !------------!
    
-   ! deafult 
+   ! default, debug mode !
    if (h2) then 
       call get_h2(mol)
       call generateMeta(file_name, dir, base, ext)
@@ -126,8 +127,18 @@ subroutine scfMain(env,args)
       call env%checkpoint("reading geometry input '"//file_name//"' failed")
    endif
 
-
+   !----------------------!
+   ! CALCULATION SETTINGS !
+   !----------------------!
    
+   call print_setup(env%unit,mol%n,file_name)
+   
+   !-------------------------!
+   ! CLASSICAL CONTRIBUTIONS !
+   !-------------------------!
+
+   !call nuclear_repulsion()
+     
 end subroutine scfMain
 
 
