@@ -76,6 +76,8 @@ end subroutine date
 
 subroutine print_setup(iunit,n,fname)
 
+   use systools, only : rdvar
+
    !> I/O unit
    integer, intent(in) :: iunit
 
@@ -85,9 +87,34 @@ subroutine print_setup(iunit,n,fname)
    !> coordinate file
    character(len=*), intent(in) :: fname
 
+   !> dummy raw string 
+   character(len=:), allocatable :: rawstr
+
+   !> length of the CLI command
+   integer :: l
+   
+   !> error handling
+   integer :: err
+
    ! header !
    write(iunit,'(a)')
-   call generic_header(iunit,'Calculation Settings', 49, 10)
+   call generic_header(iunit,'Calculation Settings', 43, 3)
+
+   ! program call !
+   if (allocated(rawstr)) deallocate(rawstr)
+   call get_command(length=l)
+   allocate( character(len=l) :: rawstr )
+   call get_command(rawstr)
+   write(iunit, '(3x,a,"::",1x,a)')    'program call    ', rawstr
+
+   ! hostname !
+   call rdvar('HOSTNAME',rawstr,err)
+   if (err.eq.0) &
+      write(iunit,'(3x,a,"::",1x,a)')  'hostname        ', rawstr
+
+   ! coordinate file name !
+   write(iunit,'(3x,a,"::",1x,a)')     'coordinate file ', fname
+   
 
 end subroutine print_setup
 
@@ -112,7 +139,8 @@ subroutine generic_header(iunit,string,width,offset)
    integer :: ifront, iback
 
    !> header formatted string
-   character(len=:), allocatable :: strformat
+   character(len=width) :: strformat
+   character(len=2*width) :: outstr
 
    !> dummys 
    character(len=width) :: idum1
@@ -122,11 +150,16 @@ subroutine generic_header(iunit,string,width,offset)
    ifront = (width - strlen) / 2
    iback  = width - ifront - strlen 
 
-   write(idum1,i0) width
-   write(idum2,i0) offset
-   write(strformat, '(" |",', ifront, 'x,a,',iback, 'x,'' | '')' ) string
+   write(idum1,*) width
+   write(idum2,*) offset
 
-   print*,strformat
+   write(strformat, '(i0,"x,a,", i0,"x")') ifront, iback 
+   write(outstr,'("|",'//strformat//',"|")') string
+   
+   write(iunit, '('//idum2//'x,1x,'//idum1//'("-"),1x)')
+   write(iunit, '('//idum2//'x,a)')outstr 
+   write(iunit, '('//idum2//'x,1x,'//idum1//'("-"),1x)')
+
 end subroutine generic_header
 
 endmodule print_

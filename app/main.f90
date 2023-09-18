@@ -99,9 +99,7 @@ subroutine scfMain(env,args)
 
    call env%checkpoint("Reading file from file unsuccessful! Please check .CHRG or .UHF")
 
-   !----------------------------------------------------------------
    !> First user interaction: print the banner
-   !----------------------------------------------------------------
    call scf_header(env%unit)
 
    ! to switch responsibility from me onto you !

@@ -37,4 +37,55 @@ subroutine get_line(unitID,text,stat)
     
 
 endsubroutine get_line
+
+subroutine rdvar(inp,out,iost)
+
+   !> input raw value
+   character(len=*), intent(in) :: inp
+
+   !> output var
+   character(len=:), allocatable :: out
+   
+   !> error handling
+   integer, intent(out), optional :: iost
+
+   !> local buffer
+   integer :: err
+
+   !> local buffer
+   integer :: l
+   
+   ! deallocate dummy !
+   if (allocated(out)) deallocate(out)
+
+   ! retrieve envvar length !
+   call get_environment_variable(inp,length=l,status=err)
+   if (err.eq.0 .and. l.gt.0) then
+      
+      allocate( character(len=l) :: out)
+      call get_environment_variable(inp,out,status=err)
+      
+      if (err.ne.0) then
+         if (present(iost)) then
+            iost = err
+            return
+         else 
+            call raise('E', 'System variable '//inp//' is corrupted')
+         endif
+      endif
+   
+   else 
+      if (present(iost)) then
+         iost = err
+         return
+      else 
+         call raise('E', 'System variable '//inp//' cannot be read')
+      endif
+   endif
+
+   ! indicate success !
+   if(present(iost)) iost = 0
+
+end subroutine rdvar
+
 endmodule systools
