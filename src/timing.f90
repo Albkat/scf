@@ -4,7 +4,7 @@ module time
     intrinsic :: date_and_time
 
     public :: print_timestring, start_timing_run, start_timing
-    public :: init_timing
+    public :: init_timing, stop_timing
     private :: verbose
 
     character(len=8) :: start_date, stop_date
@@ -46,9 +46,7 @@ subroutine init_timing(ntimer, level)
 
 end subroutine init_timing
 
-!------------------------------------------
 !> start timing for time diff
-!------------------------------------------
 subroutine start_timing(element)
 
     implicit none
@@ -60,6 +58,19 @@ subroutine start_timing(element)
     timing_cpu(element) = timing_cpu(element) - time_cpu
 
 end subroutine start_timing
+
+!> stop timer
+subroutine stop_timing(element)
+
+   implicit none
+   integer, intent(in) :: element
+   real(wp) :: time_cpu
+   real(wp) :: time_wall
+   call timing(time_cpu,time_wall)
+   timing_cpu(element) = timing_cpu(element) + time_cpu
+   timing_wall(element) = timing_wall(element) + time_wall
+
+end subroutine
 
 !------------------------------------------
 !> print the timing as a string

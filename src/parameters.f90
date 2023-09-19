@@ -16,22 +16,26 @@ module parameters
 
 
 
-    !> settings for calculation
-    type type_set
-        integer :: runtyp = p_run_rhf
-        !-------------------------
-        !           general
-        !-------------------------
-        integer :: max_cycles = 100
-        integer :: chrg = 0 
-        integer :: uhf = 0
-        integer :: nalphabeta = 0
-        !-------------------------
-        !           scf
-        !-------------------------
-        integer :: maxscfiter = 100
-    end type type_set
-    type(type_set) :: set
+   !> settings for calculation
+   type type_set
+      
+      ! RUNTYPES !
+      integer :: runtyp = p_run_rhf
+      
+      ! GENERAL !
+      integer :: chrg = 0 
+      integer :: uhf = 0
+      integer :: nalphabeta = 0
+      integer :: printlevel = normal
+
+      ! SCF !
+      integer :: maxscfiter = 100
+      
+      ! OPTIMIZAION !
+      integer :: max_cycles = 100
+
+   end type type_set
+   type(type_set) :: set
 
 contains
 

@@ -3,7 +3,7 @@ version = "0.1.0"
 license = "license"
 author = "albert"
 maintainer = "92109627+Albkat@users.noreply.github.com"
-copyright = "Copyright 2023, albert"
+copyright = "Copyright 2023, Albkat"
 [build]
 auto-executables = true
 auto-tests = true

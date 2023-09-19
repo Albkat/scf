@@ -7,6 +7,9 @@ module scf_main
     use file
     use reading, only : read_molecule
     use print_
+    use time
+    use calculator
+    use results
     implicit none
     private
     public :: scfMain
@@ -42,9 +45,18 @@ subroutine scfMain(env,args)
    integer :: err 
       !! unit for error handling
    integer :: ftype
-   !> wrapper types to bundle information together
+   
+   ! wrapper types to bundle information together !
+   
+   !> molecular structure data
    type(type_molecule) :: mol
-      !!  mol str info 
+
+   !> calculator
+   type(type_calculator),allocatable :: calc
+
+   !> SCF results
+   type(scf_results) :: res
+
 
    !-----------------------------------------------------
    !> read command line arguments and configuration files
@@ -130,12 +142,16 @@ subroutine scfMain(env,args)
    !----------------------!
    
    call print_setup(env%unit,mol%n,file_name)
-   
-   !-------------------------!
-   ! CLASSICAL CONTRIBUTIONS !
-   !-------------------------!
+   call newCalculator(env, mol, calc)
+   call env%checkpoint("could not setup SP calculator!")
 
-   !call nuclear_repulsion()
+   !--------------!
+   ! SINGLE-POINT !
+   !--------------!
+
+   call start_timing(2)
+   call calc%singlepoint(env,mol,set%)
+   call stop_timing(2)
      
 end subroutine scfMain
 
