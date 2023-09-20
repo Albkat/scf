@@ -1,18 +1,20 @@
 module scf_main
-    use environment, only : type_environment
-    use setmod
-    use cml_parser, only : type_parser
-    use systools, only : get_line
-    use molecule
-    use file
-    use reading, only : read_molecule
-    use print_
-    use time
-    use calculator
-    use results
-    implicit none
-    private
-    public :: scfMain
+   use environment, only : type_environment
+   use setmod
+   use cml_parser, only : type_parser
+   use systools, only : get_line
+   use molecule
+   use file
+   use reading, only : read_molecule
+   use print_
+   use time
+   use calculator_ , only : type_calculator 
+   use results
+   use setup
+   use parameters
+   implicit none
+   private
+   public :: scfMain
 
 contains
 
@@ -52,7 +54,7 @@ subroutine scfMain(env,args)
    type(type_molecule) :: mol
 
    !> calculator
-   type(type_calculator),allocatable :: calc
+   class(type_calculator),allocatable :: calc
 
    !> SCF results
    type(scf_results) :: res
@@ -142,7 +144,9 @@ subroutine scfMain(env,args)
    !----------------------!
    
    call print_setup(env%unit,mol%n,file_name)
-   call newCalculator(env, mol, calc)
+
+   call newCalculator(env, mol, calc, set%accuracy)
+   
    call env%checkpoint("could not setup SP calculator!")
 
    !--------------!
@@ -150,7 +154,7 @@ subroutine scfMain(env,args)
    !--------------!
 
    call start_timing(2)
-   call calc%singlepoint(env,mol,set%)
+   !call calc%singlepoint(env,mol,set%)
    call stop_timing(2)
      
 end subroutine scfMain

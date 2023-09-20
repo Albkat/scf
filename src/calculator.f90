@@ -1,7 +1,7 @@
 !> abstract calculator 
-module calculator
+module calculator_
    use iso_fortran_env, only : wp => real64
-   use environment, only : type_environment
+   use environment
    use molecule, only : type_molecule
    use results, only : scf_results
    implicit none
@@ -22,7 +22,7 @@ module calculator
    endtype type_calculator
 
    abstract interface
-      subroutine singlepoint(env, mol, pr, res)
+      subroutine singlepoint(self,env, mol, pr, res)
          import :: type_calculator, type_environment, type_molecule
          import :: scf_results
          
@@ -43,7 +43,5 @@ module calculator
 
       end subroutine singlepoint
    end interface
-end module calculator
-
-
-
+contains
+end module calculator_
