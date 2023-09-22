@@ -40,6 +40,15 @@ subroutine newSCFCalculator(env, mol, calc, acc)
    !> SCF accuracy
    real(wp), intent(in) :: acc 
 
+   ! SCF accuracy !
+   if (present(acc)) then
+      calc%accuracy = acc
+   else 
+      calc%accuracy = 1.0_wp
+   endif
+
+   
+
 end subroutine newSCFCalculator
 
 !> SCF SP calculation

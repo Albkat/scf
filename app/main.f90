@@ -144,10 +144,9 @@ subroutine scfMain(env,args)
    !----------------------!
    
    call print_setup(env%unit,mol%n,file_name)
-
-   call newCalculator(env, mol, calc, set%accuracy)
    
-   call env%checkpoint("could not setup SP calculator!")
+   call newCalculator(env, mol, calc, set%accuracy)
+   call env%checkpoint("Could not setup SP calculator!")
 
    !--------------!
    ! SINGLE-POINT !

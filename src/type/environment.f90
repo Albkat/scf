@@ -49,36 +49,37 @@ module environment
         procedure :: warning
             !! add an warning to the messsage log
 
-        procedure :: terminate => terminateRun
-            !! forceful termination
+      !> forcefully terminate
+      procedure :: terminate => terminateRun
 
-        procedure :: show
-            !! show and clear error log
+      !> print error log
+      procedure :: show
 
         procedure :: check
             !! check status of env for errors
 
-        procedure :: checkpoint
-            !! check ststus of env
+      !> check status of environment
+      procedure :: checkpoint
     
-        end type type_environment
+   end type type_environment
 
-    type :: type_message
-        logical :: error
-        character(len=:), allocatable :: message
-    end type type_message
+   !> wrapper for error messages 
+   type :: type_message
+      logical :: error
+      character(len=:), allocatable :: message
+   end type type_message
 
     interface init
         module procedure :: init_env
     end interface 
     
-    !> overloaded resize interface
-    interface resize
-        module procedure :: resizeMessage
-    end interface
+   !> resize log(:)
+   interface resize
+      module procedure :: resizeMessage
+   end interface
 
-    integer, parameter :: initial_size = 20
-        !! size of log(:)
+   !> log(:) size
+   integer, parameter :: initial_size = 20
 
 contains
 
@@ -125,25 +126,25 @@ end subroutine init_env
 !> create and push back a new error to the message log
 subroutine error(self, message, source)
     
-    class(type_environment), intent(inout) :: self
-        !! instance of the calc env
+   !> instance of calculation environment
+   class(type_environment), intent(inout) :: self
 
-    character(len=*), intent(in) :: message
-        !! error 
+   !> error message
+   character(len=*), intent(in) :: message
 
-    character(len=*), intent(in), optional :: source
+   character(len=*), intent(in), optional :: source
 
-    !> to increase number of logs 
-    if (self%number_log >= size(self%log)) then
-        call resize(self%log)
-    endif
+   !> to increase number of logs 
+   if (self%number_log >= size(self%log)) then
+      call resize(self%log)
+   endif
 
-    self%number_log = self%number_log + 1
-    if (present(source)) then
-        self%log(self%number_log) = type_message(.true., source // ': ' // message)
-    else
-        self%log(self%number_log) = type_message(.true., message)
-    endif
+   self%number_log = self%number_log + 1
+   if (present(source)) then
+      self%log(self%number_log) = type_message(.true., source // ': ' // message)
+   else
+      self%log(self%number_log) = type_message(.true., message)
+   endif
 
 end subroutine error
 
@@ -207,71 +208,73 @@ subroutine resizeMessage(log,n)
 
 end subroutine resizeMessage
 
+!> forcefully terminate
 subroutine terminateRun(self, message, code)
     
-    class(type_environment), intent(inout) :: self
-        !! instance of a calc env
+   !> instance of calculation environment
+   class(type_environment), intent(inout) :: self
 
-    character(len=*), intent(in) :: message
-        !! message if error
+   !> raw text message 
+   character(len=*), intent(in) :: message
 
-    integer, intent(in), optional :: code
-        !! exit code for termination
+   !> exit code for termination
+   integer, intent(in), optional :: code
 
-    interface
-        subroutine terminate(code)
-            integer, intent(in) :: code
-        end subroutine terminate
-    end interface
+   ! explicit interface to global terminate routine !
+   interface
+      subroutine terminate(code)
+         integer, intent(in) :: code
+      end subroutine terminate
+   end interface
 
-    call self%error(message)
+   call self%error(message)
 
-    call self%show("Program stopped due to fatal error", .true.)
+   call self%show("Program stopped due to fatal error", .true.)
 
-    if (present(code)) then
-        call terminate(code)
-    else 
-        call terminate(1)
-    endif
+   if (present(code)) then
+      call terminate(code)
+   else 
+      call terminate(1)
+   endif
 
 end subroutine terminateRun
 
-!> show the log
+!>  print error log
 subroutine show(self, message, isError)
 
-    class(type_environment), intent(inout) ::  self
-        !! instance of a calc env
+   !> instance of calculation environment
+   class(type_environment), intent(inout) ::  self
 
-    character(len=*), intent(in) :: message
-        !! message in case of error
+   !> message text
+   character(len=*), intent(in) :: message
 
-    logical, intent(in), optional :: isError
-        !! recommendation for terminating run
+   !> if error 
+   logical, intent(in), optional :: isError
 
-    integer :: iLog
-    logical :: isError0
+   integer :: iLog
+   logical :: isError0
 
-    if (self%number_log > 0) then
-        if (present(isError)) then
-            isError0 = isError
-        else 
-            call self%check(isError0)
-        endif
-        
-        if (isError0) then
-            write(self%unit, '(72("#"), /, "[ERROR]", 1x, a)') message
-        else
-            write(self%unit, '(72("#"), /, "[WARNING]", 1x, a)') message
-        endif
+   if (self%number_log > 0) then
+      if (present(isError)) then
+         isError0 = isError
+      else 
+         call self%check(isError0)
+      endif
+      
+      if (isError0) then
+         write(self%unit, '(72("#"), /, "[ERROR]", 1x, a)') message
+      else
+         write(self%unit, '(72("#"), /, "[WARNING]", 1x, a)') message
+      endif
 
-        do iLog = self%number_log, 1, -1
-            write(self%unit, '("-", i0, "-", 1x, a)') iLog, self%log(iLog)%message
-            deallocate(self%log(iLog)%message)
-        enddo
+      do iLog = self%number_log, 1, -1
+         write(self%unit, '("-", i0, "-", 1x, a)') iLog, self%log(iLog)%message
+         deallocate(self%log(iLog)%message)
+      enddo
 
-        write(self%unit, '(72("#"))')
-        self%number_log = 0
-    endif
+      write(self%unit, '(72("#"))')
+      self%number_log = 0
+   endif
 end subroutine show
 
 subroutine check(self, terminate)
@@ -286,26 +289,28 @@ subroutine check(self, terminate)
 
 end subroutine check
 
+!> check status of environment
 subroutine checkpoint(self, message)
 
-    class(type_environment), intent(inout) :: self
-        !! instance of a calc env
+   !> instance of calculation environment
+   class(type_environment), intent(inout) :: self
 
-    character(len=*), intent(in) :: message
-        !! error message
+   !> error message
+   character(len=*), intent(in) :: message
 
-    logical :: isTerminate
-        !! if terminate
+   !> if terminate
+   logical :: isTerminate
 
-    integer :: iLog
-        !! counter
+   !> counter
+   integer :: iLog
 
-    !> if any errors
-    call self%check(isTerminate)
+   ! check for any errors !
+   call self%check(isTerminate)
 
-    if (isTerminate) then
-        call self%terminate(message)
-    endif
+   ! terminate if any !
+   if (isTerminate) then
+      call self%terminate(message)
+   endif
 
 end subroutine checkpoint
 end module environment
