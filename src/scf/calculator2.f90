@@ -4,6 +4,8 @@ module scf_calculator
    use molecule, only : type_molecule
    use calculator_, only : type_calculator
    use results
+   use basis, only : basisset
+
    implicit none
 
    public :: newSCFCalculator, type_scf_calculator
@@ -14,6 +16,10 @@ module scf_calculator
 
       !> max number of SCF cycles
       integer :: maxiter 
+
+      !> minimal basis set 
+
+
    contains
       
       !> perform SP calculation
@@ -26,7 +32,7 @@ contains
 subroutine newSCFCalculator(env, mol, calc, acc)
 
    !> error producing procedure
-   character(len=*), parameter :: source = "scf_calculator_newSCFCalculator"
+   character(len=*), parameter :: source = "scf__newSCFCalculator"
 
    !> calculation environment
    type(type_environment), intent(inout) :: env
@@ -38,7 +44,7 @@ subroutine newSCFCalculator(env, mol, calc, acc)
    type(type_scf_calculator), intent(out) :: calc 
 
    !> SCF accuracy
-   real(wp), intent(in) :: acc 
+   real(wp), optional, intent(in) :: acc 
 
    ! SCF accuracy !
    if (present(acc)) then
@@ -47,7 +53,13 @@ subroutine newSCFCalculator(env, mol, calc, acc)
       calc%accuracy = 1.0_wp
    endif
 
-   
+   !-----------!
+   ! BASIS SET !
+   !-----------!
+
+   ! expand Slater function !
+   !call basisset%newBasisset()
+
 
 end subroutine newSCFCalculator
 
@@ -55,7 +67,7 @@ end subroutine newSCFCalculator
 subroutine singlepoint(self,env,mol,pr,res)
 
    !> error producing procedure
-   character(len=*), parameter :: source = "scf_calculator_singlepoint"
+   character(len=*), parameter :: source = "scf__singlepoint"
 
    !> calculator instance 
    class(type_scf_calculator), intent(inout) :: self
