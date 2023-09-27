@@ -153,7 +153,7 @@ subroutine scfMain(env,args)
    !--------------!
 
    call start_timing(2)
-   !call calc%singlepoint(env,mol,set%)
+   call calc%singlepoint(env,mol,set%printlevel,res)
    call stop_timing(2)
      
 end subroutine scfMain

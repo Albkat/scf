@@ -5,6 +5,7 @@ module scf_calculator
    use calculator_, only : type_calculator
    use results
    use basis, only : basisset
+   use scf_, only : scf
 
    implicit none
 
@@ -31,6 +32,8 @@ contains
 !> allocate new scf calculator
 subroutine newSCFCalculator(env, mol, calc, acc)
 
+   use parameters
+
    !> error producing procedure
    character(len=*), parameter :: source = "scf__newSCFCalculator"
 
@@ -53,13 +56,13 @@ subroutine newSCFCalculator(env, mol, calc, acc)
       calc%accuracy = 1.0_wp
    endif
 
+   calc%maxiter = set%maxscfiter
    !-----------!
    ! BASIS SET !
    !-----------!
 
    ! expand Slater function !
    !call basisset%newBasisset()
-
 
 end subroutine newSCFCalculator
 
@@ -83,6 +86,10 @@ subroutine singlepoint(self,env,mol,pr,res)
 
    !> detailed results
    type(scf_results), intent(out) :: res
+
+   call mol%calculate_distance
+
+   call scf(env,mol,self%maxiter,pr, self%accuracy,res)
 
 end subroutine singlepoint
 
