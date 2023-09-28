@@ -5,7 +5,9 @@ module scf_
    use results, only : scf_results
    use parameters
    use basis, only : basisset
+   use scf_repulsion, only : repulsion
    implicit none
+
    public :: scf
    private
 contains
@@ -32,6 +34,9 @@ subroutine scf(env,mol,iter,pr,acc,res)
    !> detailed results
    type(scf_results), intent(out) :: res
 
+   !> repulsion energy
+   real(wp) :: rep
+
    character(len=*),parameter :: intfmt = &
       '(3x,":",2x,a,i18,4x,":")'
    
@@ -52,7 +57,9 @@ subroutine scf(env,mol,iter,pr,acc,res)
 
    !------------------!
    ! REPULSION ENERGY !
-   !------------------!
+   !------------------! 
+   call repulsion(env,mol,pr,rep)
+
 
 end subroutine scf
 end module scf_
